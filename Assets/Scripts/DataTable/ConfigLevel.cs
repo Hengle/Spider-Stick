@@ -15,6 +15,7 @@ public class ConfigLevelRecord
 }
 public class ConfiglevelKey
 {
+    public int id;
     public int level;
 }
 public class ConfigLevelComparison : ConfigCompare<ConfigLevelRecord>

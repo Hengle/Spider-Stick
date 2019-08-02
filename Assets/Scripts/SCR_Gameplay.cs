@@ -154,6 +154,7 @@ public class SCR_Gameplay : MonoBehaviour
         anchorS.Add(anchor);
         anchorLast = anchor;
     }
+
     //public List<Transform> GetListAnchor()
     //{
     //    for (int i = 0; i < firstAnchor - 1; i++)
@@ -225,10 +226,8 @@ public class SCR_Gameplay : MonoBehaviour
         // Button Replay
 		if (skipMenu)
 		{
-            if (SCR_Gameplay.instance.state == GameState.READYENDLESS)
-			    SwitchState(GameState.READYENDLESS);
-            else
-                SwitchState(GameState.READYLEVEL);
+            SwitchState(GameState.READYENDLESS);
+            //SwitchState(GameState.READYLEVEL);
         }
 	}
 	private void RequestInterstitial()
@@ -298,9 +297,15 @@ public class SCR_Gameplay : MonoBehaviour
         player.SetActive(value: true);
         // Use Data Config
         ConfiglevelKey key = new ConfiglevelKey();
-        key.level = cfLevel.level;
+        key.id = cfLevel.id;
+        key.level = 1;
         cfLevel = ConfigManager.instance.configlevel.GetRecordBykeySearch(key);
-        
+
+        Debug.Log(cfLevel.anchor);
+        firstAnchor = cfLevel.anchor;
+        firstWall = cfLevel.wall;
+
+
         //-------------Create Anchor
         for (int i = 0; i < cfLevel.anchor; i++)
         {
@@ -386,19 +391,27 @@ public class SCR_Gameplay : MonoBehaviour
         //{
         //    walls[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, walls[0].transform.position.z);
         //}
-        //----------------------------------Create Anchor
+        AddAnchor();
+        AddWall();
+        AddStartPoint();
+        // At initialization currentAnchor = -1(not grab any time yet)
+        currentAnchor = -1;
+    }
+    private void AddAnchor()
+    {
         for (int i = 0; i < firstAnchor; i++)
         {
-            //Debug.Log(num);
             Transform anchor = CreateAnchor();
             anchor.name = "anchor number " + i;
             anchorS.Add(anchor);
             anchor.position = new Vector3(num2 + (float)i * 10f, GetRandomY(), 0);
             AnchorControl anchorControl = anchor.GetComponent<AnchorControl>();
             anchorControl.Setup(this);
-		}
+        }
         anchorLast = anchorS[anchorS.Count - 1];
-        //----------------------------------Create Wall
+    }
+    private void AddWall()
+    {
         for (int j = 0; j < firstWall; j++)
         {
             Transform wall = CreateWall();
@@ -408,10 +421,10 @@ public class SCR_Gameplay : MonoBehaviour
             wallControl.Setup(this);
         }
         wallLast = wallS[wallS.Count - 1];
-        //----------------------------------Create StartPoint
-		startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
-        // At initialization currentAnchor = -1(not grab any time yet)
-        currentAnchor = -1;
+    }
+    private void AddStartPoint()
+    {
+        startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
     }
 
 	public float GetRandomY()
