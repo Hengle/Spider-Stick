@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a64e5b0e436d4bed9780211ae245f7b, type: 3}
+  m_Name: flycam_Data
+  m_EditorClassIdentifier: 
+  dataName: flycam
+  dragonBonesJSON: {fileID: 4900000, guid: 819951181ef51104bb2de5b92e7af71b, type: 3}
+  textureAtlas:
+  - textureAtlasJSON: {fileID: 4900000, guid: 36bbfe330e7313e4692eb02429569ca0, type: 3}
+    texture: {fileID: 2800000, guid: eab47acbc0d492b4a9ac838ff4d0d709, type: 3}
+    material: {fileID: 2100000, guid: 3dc5c603d4fa3d8408839f5dff86f224, type: 2}
+    uiMaterial: {fileID: 0}
