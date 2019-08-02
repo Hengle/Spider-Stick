@@ -64,7 +64,7 @@ public class SCR_Player : MonoBehaviour
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
-			if (SCR_Gameplay.instance.state == GameState.READYENDLESS)
+			if (SCR_Gameplay.instance.state == GameState.READYENDLESS || SCR_Gameplay.instance.state == GameState.READYLEVEL)
 			{
 				SwitchState(PlayerState.JUMP);
 				rb.AddForce(JUMP_FORCE);
@@ -272,8 +272,7 @@ public class SCR_Player : MonoBehaviour
 		trailRenderer.emitting = false;
 		SCR_Gameplay.instance.updateCamera = false;
 		Time.timeScale = 0.2f;
-		Time.fixedDeltaTime = Time.timeScale * 0.02f;
-        
+		Time.fixedDeltaTime = Time.timeScale * 0.02f;   
     }
     private void Fall2()
     {

@@ -124,7 +124,8 @@ public class SCR_Gameplay : MonoBehaviour
 	public Transform anchorLast;
     public Transform wallLast;
     //private Transform[] anchorS = new Transform[5];
-    private Transform[] wallS = new Transform[4];
+    //private Transform[] wallS = new Transform[4];
+    private List<Transform> wallS;
     private List<Transform> anchorS;
     //private Transform[] wallS;
     public Transform anchorPrefab;
@@ -132,7 +133,10 @@ public class SCR_Gameplay : MonoBehaviour
     public Transform enemyPrefab;
     public int number = 5;
     private int firstAnchor = 7;
+    private int firstWall = 4;
     private float num2 = 7.5f;
+    //---------------- Config
+    public ConfigLevelRecord cfLevel;
 
     public void Awake()
 	{
@@ -141,6 +145,7 @@ public class SCR_Gameplay : MonoBehaviour
 		instance = this;
 
         anchorS = new List<Transform>();
+        wallS   = new List<Transform>(); 
 
 	}
 
@@ -217,12 +222,15 @@ public class SCR_Gameplay : MonoBehaviour
 		state = GameState.MENU;
 		MobileAds.Initialize("ca-app-pub-0081066185741622~8874259147");
 		RequestInterstitial();
+        // Button Replay
 		if (skipMenu)
 		{
-			SwitchState(GameState.READYENDLESS);
-		}
+            if (SCR_Gameplay.instance.state == GameState.READYENDLESS)
+			    SwitchState(GameState.READYENDLESS);
+            else
+                SwitchState(GameState.READYLEVEL);
+        }
 	}
-
 	private void RequestInterstitial()
 	{
 		string adUnitId = "ca-app-pub-0081066185741622/9034041242";
@@ -270,9 +278,60 @@ public class SCR_Gameplay : MonoBehaviour
 	}
     private void ReadyLevel()
     {
+        // Hide mainMenu
+        mainMenu.SetActive(value: false);
+        // if new player show tutorial
+        // else show ProgressBar
+        if (currentLevel == 0)
+        {
+            scrTutorial.Show();
+            scrProgressBar.gameObject.SetActive(value: false);
+        }
+        else
+        {
+            scrProgressBar.SetLevel(currentLevel + 1);
+            scrProgressBar.gameObject.SetActive(value: false);
+        }
+        // Get Anim Player
+        // Show Player
+        player.GetComponent<Animator>().runtimeAnimatorController = ACL_CHARACTERS[character];
+        player.SetActive(value: true);
+        // Use Data Config
+        ConfiglevelKey key = new ConfiglevelKey();
+        key.level = cfLevel.level;
+        cfLevel = ConfigManager.instance.configlevel.GetRecordBykeySearch(key);
+        
+        //-------------Create Anchor
+        for (int i = 0; i < cfLevel.anchor; i++)
+        {
+            //Debug.Log(num);
+            Transform anchor = CreateAnchor();
+            anchor.name = "anchor number " + i;
+            anchorS.Add(anchor);
+            anchor.position = new Vector3(num2 + (float)i * 10f, GetRandomY(), 0);
+            AnchorControl anchorControl = anchor.GetComponent<AnchorControl>();
+            anchorControl.Setup(this);
+            //anchorS[];
+        }
+        anchorLast = anchorS[anchorS.Count - 1];
+        //-------------Create Wall
+        for (int j = 0; j < cfLevel.wall; j++)
+        {
+            //Debug.Log(wallS.Length + "    " + j);
+            //Debug.Log(num);
+            Transform wall = CreateWall();
+            wallS[j] = wall;
+            wall.position = new Vector3(num2 + (float)j * 10f, GetRandomY2(), 0);
+            WallControl wallControl = wall.GetComponent<WallControl>();
+            wallControl.Setup(this);
 
+            if (j == wallS.Count - 1)
+                wallLast = wall;
+        }
+        //-------------Create StartPoint
+        startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
     }
-	private void ReadyEndless()
+    private void ReadyEndless()
 	{
 		mainMenu.SetActive(value: false);
 		if (currentLevel == 0)
@@ -287,15 +346,13 @@ public class SCR_Gameplay : MonoBehaviour
 		}
 		player.GetComponent<Animator>().runtimeAnimatorController = ACL_CHARACTERS[character];
 		player.SetActive(value: true);
-		int num = 0;
-		num = ((currentLevel >= SCR_Config.NUMBER_ANCHORS.Length) ? (currentLevel + 1) : SCR_Config.NUMBER_ANCHORS[currentLevel]);
-		
 
         // Create Point 
         // Xét vị trí x và vị trí y
         // Xét vị trí cho node được tạo
         // thêm vào danh sách
-
+        //int num = 0;
+        //num = ((currentLevel >= SCR_Config.NUMBER_ANCHORS.Length) ? (currentLevel + 1) : SCR_Config.NUMBER_ANCHORS[currentLevel]);
         /* for (int i = 0; i < num; i++)
 		{
 			GameObject gameObject = UnityEngine.Object.Instantiate(PFB_ANCHOR);
@@ -304,8 +361,32 @@ public class SCR_Gameplay : MonoBehaviour
 			gameObject.transform.position = new Vector3(x, y, gameObject.transform.position.z);
 			anchors.Add(gameObject);
 		}*/
+        //----------------------------------
+        //int num3 = 0;
+        //num3 = ((currentLevel >= SCR_Config.NUMBER_WALLS.Length) ? currentLevel : SCR_Config.NUMBER_WALLS[currentLevel]);
+        // Create Wall
+        //for (int j = 0; j < num3; j++)
+        //{
+        //	GameObject gameObject2 = UnityEngine.Object.Instantiate(PFB_WALL);
+        //	float x2 = anchorS[j].transform.position.x + 5f;
+        //	float y2 = UnityEngine.Random.Range(-12.5f, -9.5f);
+        //	if (currentLevel == 1)
+        //	{
+        //		y2 = gameObject2.transform.position.y;
+        //	}
+        //	gameObject2.transform.position = new Vector3(x2, y2, gameObject2.transform.position.z);
+        //	walls.Add(gameObject2);
+        //}
 
-        //-------------
+        //-----------------------------------Create Finish Point
+
+        //finishPoint = UnityEngine.Object.Instantiate(PFB_FINISH_POINT);
+        //finishPoint.transform.position = new Vector3(anchors[anchors.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
+        //if (currentLevel == 1)
+        //{
+        //    walls[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, walls[0].transform.position.z);
+        //}
+        //----------------------------------Create Anchor
         for (int i = 0; i < firstAnchor; i++)
         {
             //Debug.Log(num);
@@ -315,56 +396,24 @@ public class SCR_Gameplay : MonoBehaviour
             anchor.position = new Vector3(num2 + (float)i * 10f, GetRandomY(), 0);
             AnchorControl anchorControl = anchor.GetComponent<AnchorControl>();
             anchorControl.Setup(this);
-
-            //anchorS[];
 		}
         anchorLast = anchorS[anchorS.Count - 1];
-        //-------------
-
-        currentAnchor = -1;
-		int num3 = 0;
-		num3 = ((currentLevel >= SCR_Config.NUMBER_WALLS.Length) ? currentLevel : SCR_Config.NUMBER_WALLS[currentLevel]);
-
-		// Create Wall
-		//for (int j = 0; j < num3; j++)
-		//{
-		//	GameObject gameObject2 = UnityEngine.Object.Instantiate(PFB_WALL);
-		//	float x2 = anchorS[j].transform.position.x + 5f;
-		//	float y2 = UnityEngine.Random.Range(-12.5f, -9.5f);
-		//	if (currentLevel == 1)
-		//	{
-		//		y2 = gameObject2.transform.position.y;
-		//	}
-		//	gameObject2.transform.position = new Vector3(x2, y2, gameObject2.transform.position.z);
-		//	walls.Add(gameObject2);
-		//}
-
-        for (int j = 0; j < wallS.Length; j++)
+        //----------------------------------Create Wall
+        for (int j = 0; j < firstWall; j++)
         {
-            //Debug.Log(wallS.Length + "    " + j);
-            //Debug.Log(num);
             Transform wall = CreateWall();
-            wallS[j] = wall;
+            wallS.Add(wall);
             wall.position = new Vector3(num2 + (float)j * 10f, GetRandomY2(), 0);
             WallControl wallControl = wall.GetComponent<WallControl>();
             wallControl.Setup(this);
-
-            if (j == wallS.Length - 1)
-                wallLast = wall;
         }
-
+        wallLast = wallS[wallS.Count - 1];
+        //----------------------------------Create StartPoint
 		startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
-
-        //---------Create Enemy
-      
-
-        //finishPoint = UnityEngine.Object.Instantiate(PFB_FINISH_POINT);
-        //finishPoint.transform.position = new Vector3(anchors[anchors.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
-        //if (currentLevel == 1)
-        //{
-        //    walls[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, walls[0].transform.position.z);
-        //}
+        // At initialization currentAnchor = -1(not grab any time yet)
+        currentAnchor = -1;
     }
+
 	public float GetRandomY()
     {
        return UnityEngine.Random.Range(4f, 6f);
