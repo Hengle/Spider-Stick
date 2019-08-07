@@ -129,11 +129,13 @@ public abstract class BYDataTable <T>: BYDataTableOgrin where T: class
     }
     public T GetRecordBykeySearch(object key)
     {
+        Debug.Log("aaaaa");
         T item = recordCompare.SetkeySearch(key);
 
         int index= records.BinarySearch(item, recordCompare);
-
+        Debug.Log("bbbbbbbbb");
         return CopyData2(records[index],item);
+       
         //return CopyData(records[index]);
     }
     private T CopyData( object data)
@@ -144,7 +146,7 @@ public abstract class BYDataTable <T>: BYDataTableOgrin where T: class
     }
     private T CopyData2(object data, T dataOut)
     {
-
+        Debug.Log("ccccc");
          Type type = typeof(T);
         FieldInfo[] members = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 

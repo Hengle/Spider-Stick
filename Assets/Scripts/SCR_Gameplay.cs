@@ -123,18 +123,20 @@ public class SCR_Gameplay : MonoBehaviour
 	//--------------
 	public Transform anchorLast;
     public Transform wallLast;
-    //private Transform[] anchorS = new Transform[5];
-    //private Transform[] wallS = new Transform[4];
     private List<Transform> wallS;
     private List<Transform> anchorS;
-    //private Transform[] wallS;
+    //--------------
+    private List<Transform> wallLevel;
+    private List<Transform> anchorLevel;
+
     public Transform anchorPrefab;
     public Transform wallPrefab;
     public Transform enemyPrefab;
     public int number = 5;
-    private int firstAnchor = 7;
-    private int firstWall = 4;
+    private int numAnchor;
+    private int numWall;
     private float num2 = 7.5f;
+    public bool checkMode;
     //---------------- Config
     public ConfigLevelRecord cfLevel;
 
@@ -145,7 +147,10 @@ public class SCR_Gameplay : MonoBehaviour
 		instance = this;
 
         anchorS = new List<Transform>();
-        wallS   = new List<Transform>(); 
+        wallS   = new List<Transform>();
+
+        wallLevel = new List<Transform>();
+        anchorLevel = new List<Transform>();
 
 	}
 
@@ -224,10 +229,14 @@ public class SCR_Gameplay : MonoBehaviour
 		MobileAds.Initialize("ca-app-pub-0081066185741622~8874259147");
 		RequestInterstitial();
         // Button Replay
-		if (skipMenu)
+		if (skipMenu && checkMode == false)
 		{
             SwitchState(GameState.READYENDLESS);
             //SwitchState(GameState.READYLEVEL);
+        }
+        else if (skipMenu && checkMode == true)
+        {
+            SwitchState(GameState.READYLEVEL);
         }
 	}
 	private void RequestInterstitial()
@@ -277,6 +286,8 @@ public class SCR_Gameplay : MonoBehaviour
 	}
     private void ReadyLevel()
     {
+        anchorS.Clear();
+        wallS.Clear();
         // Hide mainMenu
         mainMenu.SetActive(value: false);
         // if new player show tutorial
@@ -298,43 +309,47 @@ public class SCR_Gameplay : MonoBehaviour
         // Use Data Config
         ConfiglevelKey key = new ConfiglevelKey();
         key.id = cfLevel.id;
-        key.level = 1;
+        key.level = 7;
         cfLevel = ConfigManager.instance.configlevel.GetRecordBykeySearch(key);
-
-        Debug.Log(cfLevel.anchor);
-        firstAnchor = cfLevel.anchor;
-        firstWall = cfLevel.wall;
-
+        Debug.LogError(cfLevel.anchor + " anchor");
+        Debug.LogError(cfLevel.wall + " wall");
 
         //-------------Create Anchor
         for (int i = 0; i < cfLevel.anchor; i++)
         {
-            //Debug.Log(num);
             Transform anchor = CreateAnchor();
             anchor.name = "anchor number " + i;
-            anchorS.Add(anchor);
+            anchorLevel.Add(anchor);
             anchor.position = new Vector3(num2 + (float)i * 10f, GetRandomY(), 0);
             AnchorControl anchorControl = anchor.GetComponent<AnchorControl>();
             anchorControl.Setup(this);
-            //anchorS[];
         }
-        anchorLast = anchorS[anchorS.Count - 1];
+        anchorLast = anchorLevel[anchorLevel.Count - 1];
+
         //-------------Create Wall
         for (int j = 0; j < cfLevel.wall; j++)
         {
-            //Debug.Log(wallS.Length + "    " + j);
-            //Debug.Log(num);
             Transform wall = CreateWall();
-            wallS[j] = wall;
+            wall.name = "wall number" + j;
+            wallLevel.Add(wall);
             wall.position = new Vector3(num2 + (float)j * 10f, GetRandomY2(), 0);
             WallControl wallControl = wall.GetComponent<WallControl>();
             wallControl.Setup(this);
 
-            if (j == wallS.Count - 1)
+            if (j == wallLevel.Count - 1)
                 wallLast = wall;
         }
         //-------------Create StartPoint
-        startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
+        AddStartPoint();
+        //-----------------------------------Create Finish Point
+        AddFinishPoint();
+        finishPoint.transform.position = new Vector3(anchorLevel[anchorLevel.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
+        if (currentLevel == 1)
+        {
+            wallLevel[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, wallLevel[0].transform.position.z);
+        }
+        //-----------
+        currentAnchor = -1;
     }
     private void ReadyEndless()
 	{
@@ -391,15 +406,17 @@ public class SCR_Gameplay : MonoBehaviour
         //{
         //    walls[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, walls[0].transform.position.z);
         //}
-        AddAnchor();
-        AddWall();
+        numAnchor = 7;
+        numWall = 4;
+        AddAnchor(numAnchor);
+        AddWall(numWall);
         AddStartPoint();
         // At initialization currentAnchor = -1(not grab any time yet)
         currentAnchor = -1;
     }
-    private void AddAnchor()
+    private void AddAnchor(int numAnchor)
     {
-        for (int i = 0; i < firstAnchor; i++)
+        for (int i = 0; i < numAnchor; i++)
         {
             Transform anchor = CreateAnchor();
             anchor.name = "anchor number " + i;
@@ -410,9 +427,9 @@ public class SCR_Gameplay : MonoBehaviour
         }
         anchorLast = anchorS[anchorS.Count - 1];
     }
-    private void AddWall()
+    private void AddWall(int numWall)
     {
-        for (int j = 0; j < firstWall; j++)
+        for (int j = 0; j < numWall; j++)
         {
             Transform wall = CreateWall();
             wallS.Add(wall);
@@ -425,6 +442,10 @@ public class SCR_Gameplay : MonoBehaviour
     private void AddStartPoint()
     {
         startPoint = UnityEngine.Object.Instantiate(PFB_START_POINT);
+    }
+    private void AddFinishPoint()
+    {
+        finishPoint = UnityEngine.Object.Instantiate(PFB_FINISH_POINT);
     }
 
 	public float GetRandomY()
@@ -543,21 +564,33 @@ public class SCR_Gameplay : MonoBehaviour
 		}
 		return null;
 	}
-    public Transform GetNextAnchor2()
+    public Transform GetNextAnchorEndless()
     {
         do
         {
             currentAnchor++;
             numberCurrent++;
-            //Debug.Log(numberCurrent);
         }
         while (currentAnchor < anchorS.Count && anchorS[currentAnchor].position.x < player.transform.position.x);
         if (currentAnchor < anchorS.Count)
         {
             OnCreateEnemy();
             return anchorS[currentAnchor];
-           
-
+        }
+        return null;
+    }
+    public Transform GetNextAnchorLevel()
+    {
+        do
+        {
+            currentAnchor++;
+            numberCurrent++;
+        }
+        while (currentAnchor < anchorLevel.Count && anchorLevel[currentAnchor].position.x < player.transform.position.x);
+        if (currentAnchor < anchorLevel.Count)
+        {
+            OnCreateEnemy();
+            return anchorLevel[currentAnchor];
         }
         return null;
     }
@@ -649,9 +682,11 @@ public class SCR_Gameplay : MonoBehaviour
 	public void OnPlay()
 	{
 		SwitchState(GameState.READYENDLESS);
+        checkMode = false;
 	}
     public void OnPlayLevel()
     {
         SwitchState(GameState.READYLEVEL);
+        checkMode = true;
     }
 }

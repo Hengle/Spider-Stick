@@ -73,7 +73,14 @@ public class SCR_Player : MonoBehaviour
 			else if (SCR_Gameplay.instance.state == GameState.PLAY && !distanceJoint2D.enabled)
 			{
 				SwitchState(PlayerState.SWING);
-				Grab2(SCR_Gameplay.instance.GetNextAnchor2());
+                if (SCR_Gameplay.instance.checkMode == false)
+                {
+                    Grab2(SCR_Gameplay.instance.GetNextAnchorEndless());
+                }
+                else
+                {
+                    Grab2(SCR_Gameplay.instance.GetNextAnchorLevel());
+                }
 			}
             if (checkCollision == true)
             {

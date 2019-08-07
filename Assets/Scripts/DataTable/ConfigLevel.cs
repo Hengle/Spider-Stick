@@ -6,7 +6,6 @@ using System;
 [Serializable]
 public class ConfigLevelRecord
 {
-    //id,id_Enemy,level,damage,hp
     public int id;
     public int level;
     public int anchor;

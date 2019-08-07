@@ -6,6 +6,10 @@ using UnityEngine.Analytics;
 public class ConfigManager : Singleton<ConfigManager>
 {
     private ConfigLevel configlevel_;
+    private void Start()
+    {
+        InitStart(null);
+    }
     public ConfigLevel configlevel
     {
         get
@@ -24,7 +28,7 @@ public class ConfigManager : Singleton<ConfigManager>
     }
     IEnumerator Init(Action callback)
     {
-        configlevel = Resources.Load("DataTable/ConfigLevel", typeof(ScriptableObject)) as ConfigLevel;
+        configlevel_ = Resources.Load("DataTable/ConfigLevel", typeof(ScriptableObject)) as ConfigLevel;
         yield return new WaitUntil(() => configlevel != null);
         callback?.Invoke();
     }
