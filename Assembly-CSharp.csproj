@@ -159,6 +159,7 @@
     <Compile Include="Assets\Scripts\GoogleMobileAds_Common\Utils.cs" />
     <Compile Include="Assets\Scripts\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="Assets\Scripts\PlayerState.cs" />
+    <Compile Include="Assets\Scripts\ScoreControl.cs" />
     <Compile Include="Assets\Scripts\SCR_Anchor.cs" />
     <Compile Include="Assets\Scripts\SCR_Background.cs" />
     <Compile Include="Assets\Scripts\SCR_Config.cs" />

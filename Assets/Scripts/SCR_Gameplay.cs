@@ -125,9 +125,6 @@ public class SCR_Gameplay : MonoBehaviour
     public Transform wallLast;
     private List<Transform> wallS;
     private List<Transform> anchorS;
-    //--------------
-    private List<Transform> wallLevel;
-    private List<Transform> anchorLevel;
 
     public Transform anchorPrefab;
     public Transform wallPrefab;
@@ -137,6 +134,8 @@ public class SCR_Gameplay : MonoBehaviour
     private int numWall;
     private float num2 = 7.5f;
     public bool checkMode;
+    public int score;
+    public GameObject txtScore;
     //---------------- Config
     public ConfigLevelRecord cfLevel;
 
@@ -148,10 +147,6 @@ public class SCR_Gameplay : MonoBehaviour
 
         anchorS = new List<Transform>();
         wallS   = new List<Transform>();
-
-        wallLevel = new List<Transform>();
-        anchorLevel = new List<Transform>();
-
 	}
 
     public void AddLastAnchor(Transform anchor)
@@ -159,36 +154,11 @@ public class SCR_Gameplay : MonoBehaviour
         anchorS.Add(anchor);
         anchorLast = anchor;
     }
-
-    //public List<Transform> GetListAnchor()
-    //{
-    //    for (int i = 0; i < firstAnchor - 1; i++)
-    //    {
-    //        var item = anchorS[0];
-    //        anchorS.RemoveAt(0);
-    //        anchorS.Add(item);
-    //    }
-    //    return anchorS;
-    //}
-
-
-    //public void MoveListAnchor()
-    //{
-    //    var item1 = anchorS[0];
-    //    item1.position = new Vector3(anchorLast.position.x + 10f, GetRandomY(), 0);
-    //    anchorS.Add(item1);
-    //    var item2 = anchorS[1];
-    //    item2.position = new Vector3(anchorLast.position.x + 20f, GetRandomY(), 0);
-    //    anchorS.Add(item2);
-
-    //    Debug.Log(anchorS.Count);
-    //    for (int i = 2; i < anchorS.Count; i++)
-    //    {
-    //        anchorS[i] = anchorS[i - 2];
-    //        Debug.Log("OK");
-    //    }
-    //    anchorLast = anchorS[anchorS.Count - 1];
-    //}
+    public void AddLastWall(Transform wall)
+    {
+        wallS.Add(wall);
+        wallLast = wall;
+    }
 
     public void MoveAnchor()
     {
@@ -201,9 +171,20 @@ public class SCR_Gameplay : MonoBehaviour
             }
         } 
     }
+    public void MoveWall()
+    {
+        for (int i = 0; i < wallS.Count; i++)
+        {
+            if (wallS[i].position.x < (player.transform.position.x - 10))
+            {
+                wallS[i].position = new Vector3(wallLast.position.x + 10, GetRandomY2(), 0);
+                AddLastWall(wallS[i]);
+            }
+        }
+    }
     public void Start()
 	{
-		Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;
 		currentLevel = PlayerPrefs.GetInt("currentLevel", 0);
 		character = PlayerPrefs.GetInt("character", 0);
 		recommendedCharacter = PlayerPrefs.GetInt("recommendedCharacter", 0);
@@ -232,7 +213,6 @@ public class SCR_Gameplay : MonoBehaviour
 		if (skipMenu && checkMode == false)
 		{
             SwitchState(GameState.READYENDLESS);
-            //SwitchState(GameState.READYLEVEL);
         }
         else if (skipMenu && checkMode == true)
         {
@@ -268,7 +248,11 @@ public class SCR_Gameplay : MonoBehaviour
 				scrProgressBar.SetProgress(maxProgress);
 			}
 		}
-	}
+        if (state == GameState.GAME_OVER)
+        {
+            txtScore.SetActive(value: false);
+        }
+    }
 
 	public void LateUpdate()
 	{
@@ -286,10 +270,10 @@ public class SCR_Gameplay : MonoBehaviour
 	}
     private void ReadyLevel()
     {
-        anchorS.Clear();
-        wallS.Clear();
+        Debug.LogError(currentLevel);
         // Hide mainMenu
         mainMenu.SetActive(value: false);
+        
         // if new player show tutorial
         // else show ProgressBar
         if (currentLevel == 0)
@@ -299,8 +283,8 @@ public class SCR_Gameplay : MonoBehaviour
         }
         else
         {
-            scrProgressBar.SetLevel(currentLevel + 1);
-            scrProgressBar.gameObject.SetActive(value: false);
+            scrProgressBar.SetLevel(currentLevel);
+            scrProgressBar.gameObject.SetActive(value: true);
         }
         // Get Anim Player
         // Show Player
@@ -309,105 +293,62 @@ public class SCR_Gameplay : MonoBehaviour
         // Use Data Config
         ConfiglevelKey key = new ConfiglevelKey();
         key.id = cfLevel.id;
-        key.level = 7;
+        key.level = currentLevel;
         cfLevel = ConfigManager.instance.configlevel.GetRecordBykeySearch(key);
+        Debug.LogError("Level: "+cfLevel.level);
         Debug.LogError(cfLevel.anchor + " anchor");
         Debug.LogError(cfLevel.wall + " wall");
-
-        //-------------Create Anchor
+        Debug.LogError(cfLevel.enemy + " enemy");
+        
+        //--------Create Anchor
         for (int i = 0; i < cfLevel.anchor; i++)
         {
             Transform anchor = CreateAnchor();
             anchor.name = "anchor number " + i;
-            anchorLevel.Add(anchor);
+            anchorS.Add(anchor);
             anchor.position = new Vector3(num2 + (float)i * 10f, GetRandomY(), 0);
             AnchorControl anchorControl = anchor.GetComponent<AnchorControl>();
             anchorControl.Setup(this);
         }
-        anchorLast = anchorLevel[anchorLevel.Count - 1];
+        anchorLast = anchorS[anchorS.Count - 1];
 
         //-------------Create Wall
         for (int j = 0; j < cfLevel.wall; j++)
         {
             Transform wall = CreateWall();
             wall.name = "wall number" + j;
-            wallLevel.Add(wall);
+            wallS.Add(wall);
             wall.position = new Vector3(num2 + (float)j * 10f, GetRandomY2(), 0);
             WallControl wallControl = wall.GetComponent<WallControl>();
             wallControl.Setup(this);
 
-            if (j == wallLevel.Count - 1)
+            if (j == wallS.Count - 1)
                 wallLast = wall;
         }
-        //-------------Create StartPoint
+        //-------------------Create Enemy
+        //OnCreateEnemyLevelFollowPos(anchorS, 0);
+        //--------------------------Create StartPoint
         AddStartPoint();
         //-----------------------------------Create Finish Point
         AddFinishPoint();
-        finishPoint.transform.position = new Vector3(anchorLevel[anchorLevel.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
-        if (currentLevel == 1)
-        {
-            wallLevel[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, wallLevel[0].transform.position.z);
-        }
+        finishPoint.transform.position = new Vector3(anchorS[anchorS.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
+        //if (currentLevel == 1)
+        //{
+        //    wallS[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, wallS[0].transform.position.z);
+        //}
         //-----------
         currentAnchor = -1;
     }
     private void ReadyEndless()
 	{
 		mainMenu.SetActive(value: false);
-		if (currentLevel == 0)
-		{
-			scrTutorial.Show();
-			scrProgressBar.gameObject.SetActive(value: false);
-		}
-		else
-		{
-			scrProgressBar.SetLevel(currentLevel + 1);
-			scrProgressBar.gameObject.SetActive(value: true);
-		}
+        txtScore.SetActive(value: true);
+		
 		player.GetComponent<Animator>().runtimeAnimatorController = ACL_CHARACTERS[character];
 		player.SetActive(value: true);
 
-        // Create Point 
-        // Xét vị trí x và vị trí y
-        // Xét vị trí cho node được tạo
-        // thêm vào danh sách
-        //int num = 0;
-        //num = ((currentLevel >= SCR_Config.NUMBER_ANCHORS.Length) ? (currentLevel + 1) : SCR_Config.NUMBER_ANCHORS[currentLevel]);
-        /* for (int i = 0; i < num; i++)
-		{
-			GameObject gameObject = UnityEngine.Object.Instantiate(PFB_ANCHOR);
-			float x = num2 + (float)i * 10f;
-			float y = UnityEngine.Random.Range(4f, 6f);
-			gameObject.transform.position = new Vector3(x, y, gameObject.transform.position.z);
-			anchors.Add(gameObject);
-		}*/
-        //----------------------------------
-        //int num3 = 0;
-        //num3 = ((currentLevel >= SCR_Config.NUMBER_WALLS.Length) ? currentLevel : SCR_Config.NUMBER_WALLS[currentLevel]);
-        // Create Wall
-        //for (int j = 0; j < num3; j++)
-        //{
-        //	GameObject gameObject2 = UnityEngine.Object.Instantiate(PFB_WALL);
-        //	float x2 = anchorS[j].transform.position.x + 5f;
-        //	float y2 = UnityEngine.Random.Range(-12.5f, -9.5f);
-        //	if (currentLevel == 1)
-        //	{
-        //		y2 = gameObject2.transform.position.y;
-        //	}
-        //	gameObject2.transform.position = new Vector3(x2, y2, gameObject2.transform.position.z);
-        //	walls.Add(gameObject2);
-        //}
-
-        //-----------------------------------Create Finish Point
-
-        //finishPoint = UnityEngine.Object.Instantiate(PFB_FINISH_POINT);
-        //finishPoint.transform.position = new Vector3(anchors[anchors.Count - 1].transform.position.x + 10f, finishPoint.transform.position.y, finishPoint.transform.position.z);
-        //if (currentLevel == 1)
-        //{
-        //    walls[0].transform.position = new Vector3(finishPoint.transform.position.x + -6f, finishPoint.transform.position.y + -4f, walls[0].transform.position.z);
-        //}
         numAnchor = 7;
-        numWall = 4;
+        numWall = 7;
         AddAnchor(numAnchor);
         AddWall(numWall);
         AddStartPoint();
@@ -471,7 +412,7 @@ public class SCR_Gameplay : MonoBehaviour
         Transform enemy = Instantiate(enemyPrefab);
         return enemy;
     }
-    public void OnCreateEnemy()
+    public void OnCreateEnemyEndless()
     {
         int numberWall = UnityEngine.Random.Range(1, 4);
         //int numberWall = 2;
@@ -482,6 +423,11 @@ public class SCR_Gameplay : MonoBehaviour
             enemy.position = new Vector3(anchorS[currentAnchor].position.x + 10f, 0, 0);
             numberCurrent = 0;
         }
+    }
+    public void OnCreateEnemyLevelFollowPos(List<Transform> anchor, int pos)
+    {
+        Transform enemy = CreateEnemy();
+        enemy.position = new Vector3(anchor[pos].position.x, 0, 0);
     }
 
 	public void SwitchState(GameState s)
@@ -551,50 +497,27 @@ public class SCR_Gameplay : MonoBehaviour
 		}
 	}
 
-	public GameObject GetNextAnchor()
-	{
-		do
-		{
-			currentAnchor++;
-		}
-		while (currentAnchor < anchors.Count && anchors[currentAnchor].transform.position.x < player.transform.position.x);
-		if (currentAnchor < anchors.Count)
-		{
-			return anchors[currentAnchor];
-		}
-		return null;
-	}
-    public Transform GetNextAnchorEndless()
+    public Transform GetNextAnchor()
     {
         do
         {
             currentAnchor++;
             numberCurrent++;
+            score++;
         }
         while (currentAnchor < anchorS.Count && anchorS[currentAnchor].position.x < player.transform.position.x);
         if (currentAnchor < anchorS.Count)
         {
-            OnCreateEnemy();
+            if (checkMode == false)
+            {
+                OnCreateEnemyEndless();
+            }
+            
             return anchorS[currentAnchor];
         }
         return null;
     }
-    public Transform GetNextAnchorLevel()
-    {
-        do
-        {
-            currentAnchor++;
-            numberCurrent++;
-        }
-        while (currentAnchor < anchorLevel.Count && anchorLevel[currentAnchor].position.x < player.transform.position.x);
-        if (currentAnchor < anchorLevel.Count)
-        {
-            OnCreateEnemy();
-            return anchorLevel[currentAnchor];
-        }
-        return null;
-    }
-
+  
     public bool IsLastAnchor(Rigidbody2D rb)
 	{
 		if (rb.gameObject == anchors[anchors.Count - 1])
@@ -618,9 +541,21 @@ public class SCR_Gameplay : MonoBehaviour
 			ShowAds();
 		}
 		skipMenu = true;
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
+        if (checkMode == false && state == GameState.GAME_OVER)
+        {
+            SwitchState(GameState.READYENDLESS);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+           
+        }
+        else if (checkMode == true && state == GameState.GAME_OVER || state == GameState.LEVEL_CLEARED)
+        {
+            SwitchState(GameState.READYLEVEL);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+          
+    }
 
+    // Part of mode Level
 	public void OnNext()
 	{
 		if (timeShowAds >= 30f && interstitial.IsLoaded())
@@ -628,8 +563,8 @@ public class SCR_Gameplay : MonoBehaviour
 			ShowAds();
 		}
 		skipMenu = true;
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
 	public void OnHome()
 	{

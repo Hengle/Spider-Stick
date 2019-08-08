@@ -73,15 +73,8 @@ public class SCR_Player : MonoBehaviour
 			else if (SCR_Gameplay.instance.state == GameState.PLAY && !distanceJoint2D.enabled)
 			{
 				SwitchState(PlayerState.SWING);
-                if (SCR_Gameplay.instance.checkMode == false)
-                {
-                    Grab2(SCR_Gameplay.instance.GetNextAnchorEndless());
-                }
-                else
-                {
-                    Grab2(SCR_Gameplay.instance.GetNextAnchorLevel());
-                }
-			}
+                Grab2(SCR_Gameplay.instance.GetNextAnchor());
+            }
             if (checkCollision == true)
             {
                 Release();
@@ -199,14 +192,11 @@ public class SCR_Player : MonoBehaviour
             //string strJson = "";
             //Dictionary<string, object> jsonValue = MiniJSON.Json.Deserialize(strJson) as Dictionary<string, object>;
             //List<object> lstLevel = jsonValue["level"] as List<object>;
-
-            SCR_Gameplay.instance.MoveAnchor();
-            //SCR_Gameplay.instance.OnCreateEnemy();
-            
-            //Vector3 anchorlast = gamePlay.anchorLast.position;
-            //AnchorControl.instance.transform.position = new Vector3(anchorlast.x + 10, gamePlay.GetRandomY(), 0);
-            //gamePlay.AddLastAnchor(AnchorControl.instance.transform);
-            //Debug.Log("run");
+            if (SCR_Gameplay.instance.checkMode == false)
+            {
+                SCR_Gameplay.instance.MoveAnchor();
+                SCR_Gameplay.instance.MoveWall();
+            }
         }
         else
         {
@@ -253,22 +243,23 @@ public class SCR_Player : MonoBehaviour
                 SCR_Gameplay.instance.SwitchState(GameState.GAME_OVER);
             }
         }
-		//else if (other.gameObject.tag == "FinishPoint")
-		//{
-		//	float x = (other.collider as BoxCollider2D).size.x;
-		//	if (base.transform.position.x >= other.transform.position.x - x * 0.5f && base.transform.position.x <= other.transform.position.x + x * 0.5f)
-		//	{
-		//		Stand();
-		//		SCR_Gameplay.instance.SwitchState(GameState.LEVEL_CLEARED);
-		//	}
-		//	else if (base.transform.position.x < other.transform.position.x - x * 0.5f)
-		//	{
-		//		Fall();
-		//	}
-		//}
-	}
 
-	private void Fall()
+        if (other.gameObject.tag == "FinishPoint")
+        {
+            float x = (other.collider as BoxCollider2D).size.x;
+            if (base.transform.position.x >= other.transform.position.x - x * 0.5f && base.transform.position.x <= other.transform.position.x + x * 0.5f)
+            {
+                Stand();
+                SCR_Gameplay.instance.SwitchState(GameState.LEVEL_CLEARED);
+            }
+            else if (base.transform.position.x < other.transform.position.x - x * 0.5f)
+            {
+                Fall();
+            }
+        }
+    }
+
+    private void Fall()
 	{
 		rb.velocity = new Vector2(0f, rb.velocity.y);
 		rb.angularVelocity = 0f;

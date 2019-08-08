@@ -16,7 +16,7 @@ public class SCR_ProgressBar : MonoBehaviour
 
 	public Image imgProgressFG;
 
-	public void SetLevel(int level)
+    public void SetLevel(int level)
 	{
 		txtCurrentLevel.text = level.ToString();
 		txtNextLevel.text = (level + 1).ToString();
