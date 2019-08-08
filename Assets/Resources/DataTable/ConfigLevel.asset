@@ -22,27 +22,27 @@ MonoBehaviour:
     level: 2
     anchor: 5
     wall: 4
-    enemy: 0
+    enemy: 2
   - id: 3
     level: 3
     anchor: 8
     wall: 7
-    enemy: 1
+    enemy: 3
   - id: 4
     level: 4
     anchor: 2
     wall: 1
-    enemy: 1
+    enemy: 0
   - id: 5
     level: 5
     anchor: 10
     wall: 9
-    enemy: 1
+    enemy: 3
   - id: 6
     level: 6
     anchor: 4
     wall: 3
-    enemy: 2
+    enemy: 1
   - id: 7
     level: 7
     anchor: 6
@@ -52,7 +52,7 @@ MonoBehaviour:
     level: 8
     anchor: 1
     wall: 0
-    enemy: 2
+    enemy: 0
   - id: 9
     level: 9
     anchor: 5

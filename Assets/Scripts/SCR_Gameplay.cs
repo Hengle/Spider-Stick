@@ -327,6 +327,7 @@ public class SCR_Gameplay : MonoBehaviour
         }
         //-------------------Create Enemy
         //OnCreateEnemyLevelFollowPos(anchorS, 0);
+        OnCreateEnemyLevelRandom(anchorS,cfLevel.enemy);
         //--------------------------Create StartPoint
         AddStartPoint();
         //-----------------------------------Create Finish Point
@@ -373,6 +374,7 @@ public class SCR_Gameplay : MonoBehaviour
         for (int j = 0; j < numWall; j++)
         {
             Transform wall = CreateWall();
+            wall.name = "wall number " + j;
             wallS.Add(wall);
             wall.position = new Vector3(num2 + (float)j * 10f, GetRandomY2(), 0);
             WallControl wallControl = wall.GetComponent<WallControl>();
@@ -428,6 +430,25 @@ public class SCR_Gameplay : MonoBehaviour
     {
         Transform enemy = CreateEnemy();
         enemy.position = new Vector3(anchor[pos].position.x, 0, 0);
+    }
+    public void OnCreateEnemyLevelRandom(List<Transform> anchor, int limitEnemy)
+    {
+        int count = 0;
+        int countEnemy = 0;
+        
+        for (int i = 0; i < anchor.Count -1; i++)
+        {
+            //int random = UnityEngine.Random.Range(1, 2);
+            if (count > 0 && countEnemy < limitEnemy)
+            {
+                Transform enemy = CreateEnemy();
+                enemy.position = new Vector3(anchor[i].position.x,0,0);
+                count = 0;
+                countEnemy++;
+            }
+            count++;
+        }
+      
     }
 
 	public void SwitchState(GameState s)
@@ -545,16 +566,13 @@ public class SCR_Gameplay : MonoBehaviour
         {
             SwitchState(GameState.READYENDLESS);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-           
         }
         else if (checkMode == true && state == GameState.GAME_OVER || state == GameState.LEVEL_CLEARED)
         {
             SwitchState(GameState.READYLEVEL);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-          
+        }        
     }
-
     // Part of mode Level
 	public void OnNext()
 	{
