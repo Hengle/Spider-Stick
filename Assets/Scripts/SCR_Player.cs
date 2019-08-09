@@ -192,7 +192,7 @@ public class SCR_Player : MonoBehaviour
             //string strJson = "";
             //Dictionary<string, object> jsonValue = MiniJSON.Json.Deserialize(strJson) as Dictionary<string, object>;
             //List<object> lstLevel = jsonValue["level"] as List<object>;
-            if (SCR_Gameplay.instance.checkMode == false)
+            if (SCR_Gameplay.checkMode == false)
             {
                 SCR_Gameplay.instance.MoveAnchor();
                 SCR_Gameplay.instance.MoveWall();

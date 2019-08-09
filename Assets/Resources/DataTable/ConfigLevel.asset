@@ -20,46 +20,246 @@ MonoBehaviour:
     enemy: 0
   - id: 2
     level: 2
-    anchor: 5
-    wall: 4
-    enemy: 2
-  - id: 3
-    level: 3
-    anchor: 8
-    wall: 7
-    enemy: 3
-  - id: 4
-    level: 4
     anchor: 2
     wall: 1
     enemy: 0
-  - id: 5
-    level: 5
-    anchor: 10
-    wall: 9
-    enemy: 3
-  - id: 6
-    level: 6
+  - id: 3
+    level: 3
+    anchor: 3
+    wall: 2
+    enemy: 1
+  - id: 4
+    level: 4
     anchor: 4
     wall: 3
     enemy: 1
-  - id: 7
-    level: 7
-    anchor: 6
-    wall: 5
-    enemy: 2
-  - id: 8
-    level: 8
-    anchor: 1
-    wall: 0
-    enemy: 0
-  - id: 9
-    level: 9
+  - id: 5
+    level: 5
     anchor: 5
     wall: 4
+    enemy: 1
+  - id: 6
+    level: 6
+    anchor: 6
+    wall: 5
+    enemy: 1
+  - id: 7
+    level: 7
+    anchor: 7
+    wall: 6
+    enemy: 1
+  - id: 8
+    level: 8
+    anchor: 8
+    wall: 7
+    enemy: 2
+  - id: 9
+    level: 9
+    anchor: 9
+    wall: 8
     enemy: 2
   - id: 10
     level: 10
-    anchor: 9
-    wall: 8
+    anchor: 10
+    wall: 9
+    enemy: 2
+  - id: 11
+    level: 11
+    anchor: 11
+    wall: 10
+    enemy: 2
+  - id: 12
+    level: 12
+    anchor: 12
+    wall: 11
+    enemy: 2
+  - id: 13
+    level: 13
+    anchor: 13
+    wall: 12
     enemy: 3
+  - id: 14
+    level: 14
+    anchor: 14
+    wall: 13
+    enemy: 3
+  - id: 15
+    level: 15
+    anchor: 15
+    wall: 14
+    enemy: 3
+  - id: 16
+    level: 16
+    anchor: 16
+    wall: 15
+    enemy: 3
+  - id: 17
+    level: 17
+    anchor: 17
+    wall: 16
+    enemy: 3
+  - id: 18
+    level: 18
+    anchor: 18
+    wall: 17
+    enemy: 4
+  - id: 19
+    level: 19
+    anchor: 19
+    wall: 18
+    enemy: 4
+  - id: 20
+    level: 20
+    anchor: 20
+    wall: 19
+    enemy: 4
+  - id: 21
+    level: 21
+    anchor: 21
+    wall: 20
+    enemy: 4
+  - id: 22
+    level: 22
+    anchor: 22
+    wall: 21
+    enemy: 4
+  - id: 23
+    level: 23
+    anchor: 23
+    wall: 22
+    enemy: 5
+  - id: 24
+    level: 24
+    anchor: 24
+    wall: 23
+    enemy: 5
+  - id: 25
+    level: 25
+    anchor: 25
+    wall: 24
+    enemy: 5
+  - id: 26
+    level: 26
+    anchor: 26
+    wall: 25
+    enemy: 5
+  - id: 27
+    level: 27
+    anchor: 27
+    wall: 26
+    enemy: 5
+  - id: 28
+    level: 28
+    anchor: 28
+    wall: 27
+    enemy: 6
+  - id: 29
+    level: 29
+    anchor: 29
+    wall: 28
+    enemy: 6
+  - id: 30
+    level: 30
+    anchor: 30
+    wall: 29
+    enemy: 6
+  - id: 31
+    level: 31
+    anchor: 31
+    wall: 30
+    enemy: 6
+  - id: 32
+    level: 32
+    anchor: 32
+    wall: 31
+    enemy: 6
+  - id: 33
+    level: 33
+    anchor: 33
+    wall: 32
+    enemy: 7
+  - id: 34
+    level: 34
+    anchor: 34
+    wall: 33
+    enemy: 7
+  - id: 35
+    level: 35
+    anchor: 35
+    wall: 34
+    enemy: 7
+  - id: 36
+    level: 36
+    anchor: 36
+    wall: 35
+    enemy: 7
+  - id: 37
+    level: 37
+    anchor: 37
+    wall: 36
+    enemy: 7
+  - id: 38
+    level: 38
+    anchor: 38
+    wall: 37
+    enemy: 8
+  - id: 39
+    level: 39
+    anchor: 39
+    wall: 38
+    enemy: 8
+  - id: 40
+    level: 40
+    anchor: 40
+    wall: 39
+    enemy: 8
+  - id: 41
+    level: 41
+    anchor: 41
+    wall: 40
+    enemy: 8
+  - id: 42
+    level: 42
+    anchor: 42
+    wall: 41
+    enemy: 8
+  - id: 43
+    level: 43
+    anchor: 43
+    wall: 42
+    enemy: 9
+  - id: 44
+    level: 44
+    anchor: 44
+    wall: 43
+    enemy: 9
+  - id: 45
+    level: 45
+    anchor: 45
+    wall: 44
+    enemy: 9
+  - id: 46
+    level: 46
+    anchor: 46
+    wall: 45
+    enemy: 9
+  - id: 47
+    level: 47
+    anchor: 47
+    wall: 46
+    enemy: 9
+  - id: 48
+    level: 48
+    anchor: 48
+    wall: 47
+    enemy: 10
+  - id: 49
+    level: 49
+    anchor: 49
+    wall: 48
+    enemy: 10
+  - id: 50
+    level: 50
+    anchor: 50
+    wall: 49
+    enemy: 10

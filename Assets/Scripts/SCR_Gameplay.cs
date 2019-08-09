@@ -133,7 +133,7 @@ public class SCR_Gameplay : MonoBehaviour
     private int numAnchor;
     private int numWall;
     private float num2 = 7.5f;
-    public bool checkMode;
+    public static bool checkMode;
     public int score;
     public GameObject txtScore;
     //---------------- Config
@@ -438,8 +438,8 @@ public class SCR_Gameplay : MonoBehaviour
         
         for (int i = 0; i < anchor.Count -1; i++)
         {
-            //int random = UnityEngine.Random.Range(1, 2);
-            if (count > 0 && countEnemy < limitEnemy)
+            int random = UnityEngine.Random.Range(0, 1);
+            if (count > random && countEnemy < limitEnemy)
             {
                 Transform enemy = CreateEnemy();
                 enemy.position = new Vector3(anchor[i].position.x,0,0);
@@ -517,7 +517,6 @@ public class SCR_Gameplay : MonoBehaviour
 			PlayerPrefs.SetInt("currentLevel", currentLevel);
 		}
 	}
-
     public Transform GetNextAnchor()
     {
         do
@@ -562,15 +561,13 @@ public class SCR_Gameplay : MonoBehaviour
 			ShowAds();
 		}
 		skipMenu = true;
-        if (checkMode == false && state == GameState.GAME_OVER)
+        if (checkMode == false)
         {
-            SwitchState(GameState.READYENDLESS);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        else if (checkMode == true && state == GameState.GAME_OVER || state == GameState.LEVEL_CLEARED)
+        else if (checkMode == true)
         {
-            SwitchState(GameState.READYLEVEL);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneManager.LoadScene("SCN_Gameplay", LoadSceneMode.Single);
         }        
     }
     // Part of mode Level
