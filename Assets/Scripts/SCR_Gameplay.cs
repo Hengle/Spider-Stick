@@ -94,7 +94,7 @@ public class SCR_Gameplay : MonoBehaviour
 
 	public bool updateCamera;
 
-	public int currentLevel;
+	public int currentLevel = 1;
 
 	public GameState state;
 
@@ -556,10 +556,10 @@ public class SCR_Gameplay : MonoBehaviour
     }
     public void OnReplay()
 	{
-		if (timeShowAds >= 30f && interstitial.IsLoaded())
-		{
-			ShowAds();
-		}
+		// if (timeShowAds >= 30f && interstitial.IsLoaded())
+		// {
+		// 	ShowAds();
+		// }
 		skipMenu = true;
         if (checkMode == false)
         {
@@ -573,20 +573,20 @@ public class SCR_Gameplay : MonoBehaviour
     // Part of mode Level
 	public void OnNext()
 	{
-		if (timeShowAds >= 30f && interstitial.IsLoaded())
-		{
-			ShowAds();
-		}
+		// if (timeShowAds >= 30f && interstitial.IsLoaded())
+		// {
+		// 	ShowAds();
+		// }
 		skipMenu = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 	public void OnHome()
 	{
-		if (timeShowAds >= 30f && interstitial.IsLoaded())
-		{
-			ShowAds();
-		}
+		// if (timeShowAds >= 30f && interstitial.IsLoaded())
+		// {
+		// 	ShowAds();
+		// }
 		skipMenu = false;
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
@@ -631,12 +631,12 @@ public class SCR_Gameplay : MonoBehaviour
 
 	public void OnPlay()
 	{
-		SwitchState(GameState.READYENDLESS);
         checkMode = false;
+		SwitchState(GameState.READYENDLESS);
 	}
     public void OnPlayLevel()
     {
-        SwitchState(GameState.READYLEVEL);
         checkMode = true;
+        SwitchState(GameState.READYLEVEL);
     }
 }
